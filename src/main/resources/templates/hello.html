@@ -6,7 +6,7 @@
         <title>Hello</title>
     </head>
     <body>
-        <h1 th:inline="text">Hello, <span th:remove="tag" sec:authentication="name">thymeleaf</span></h1>
+        <h1 th:inline="text" sec:authorize="isAuthenticated()" >Hello, <span th:remove="tag" sec:authentication="name"></span></h1>
         <br>
         <form th:action="@{/logout}" method="post">
             <input type="submit" value="Sign out">

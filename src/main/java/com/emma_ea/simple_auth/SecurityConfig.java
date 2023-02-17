@@ -11,8 +11,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -31,13 +35,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
+    public UserDetailsService userDetailsService(DataSource dataSource) {
         UserDetails userDetails = User
                 .withUsername("user")
                 .password(passwordEncoder().encode("password"))
                 .roles("USER")
                 .build();
-        return new InMemoryUserDetailsManager(userDetails);
+
+        JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
+        users.createUser(userDetails);
+        return users;
+//        return new InMemoryUserDetailsManager(userDetails);
     }
 
     @Bean
